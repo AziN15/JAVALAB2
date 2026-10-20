@@ -8,7 +8,7 @@ public abstract class Vehicle {
     private final String id;
     private double maxCapacityKg;
     private double currentLoadKg;
-    private final List<CargoItem> cargoList = new ArrayList<>();
+    private final List<ICargo> cargoList = new ArrayList<>();
 
     public Vehicle(String id, double maxCapacityKg) {
         this.id = (id == null || id.isBlank()) ? UUID.randomUUID().toString() : id;
@@ -21,6 +21,7 @@ public abstract class Vehicle {
 
     public abstract void move();
 
+    // Версия 1: только вес
     public void load(double weight) {
         if (weight <= 0) {
             System.out.println("Вес должен быть положительным");
@@ -28,38 +29,39 @@ public abstract class Vehicle {
         }
         if (currentLoadKg + weight <= maxCapacityKg) {
             currentLoadKg += weight;
-            cargoList.add(new CargoItem("Безымянный груз", weight));
             System.out.println("Загружено " + weight + " кг в " + id);
         } else {
             System.out.println("Превышен лимит загрузки для " + id);
         }
     }
 
-    public void load(CargoItem item) {
+    // Версия 2: именованный груз (ICargo)
+    public void load(ICargo item) {
         if (item == null) return;
         if (currentLoadKg + item.getWeight() <= maxCapacityKg) {
             currentLoadKg += item.getWeight();
             cargoList.add(item);
-            System.out.println("Загружен груз \"" + item.getName() + "\" (" + item.getWeight() + " кг) в " + id);
+            System.out.println("Загружен " + item.getType() + " (" + item.getWeight() + " кг) в " + id);
         } else {
-            System.out.println("Превышен лимит загрузки для " + id + " (груз: " + item.getName() + ")");
+            System.out.println("Превышен лимит загрузки для " + id);
         }
     }
 
-    public void load(List<CargoItem> items) {
+    // Версия 3: партия грузов
+    public void load(List<? extends ICargo> items) {
         if (items == null || items.isEmpty()) return;
-        double totalWeight = 0;
-        for (CargoItem item : items) {
-            totalWeight += item.getWeight();
+        double total = 0;
+        for (ICargo item : items) {
+            total += item.getWeight();
         }
-        if (currentLoadKg + totalWeight <= maxCapacityKg) {
-            for (CargoItem item : items) {
+        if (currentLoadKg + total <= maxCapacityKg) {
+            for (ICargo item : items) {
                 currentLoadKg += item.getWeight();
                 cargoList.add(item);
             }
-            System.out.println("Загружена партия из " + items.size() + " грузов (" + totalWeight + " кг) в " + id);
+            System.out.println("Загружена партия (" + total + " кг) в " + id);
         } else {
-            System.out.println("Превышен лимит загрузки для " + id + " (партия " + totalWeight + " кг)");
+            System.out.println("Превышен лимит загрузки для " + id);
         }
     }
 
@@ -74,5 +76,5 @@ public abstract class Vehicle {
     public String getId() { return id; }
     public double getMaxCapacityKg() { return maxCapacityKg; }
     public double getCurrentLoadKg() { return currentLoadKg; }
-    public List<CargoItem> getCargoList() { return new ArrayList<>(cargoList); }
+    public List<ICargo> getCargoList() { return new ArrayList<>(cargoList); }
 }
