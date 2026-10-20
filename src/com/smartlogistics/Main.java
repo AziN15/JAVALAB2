@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        
         Car car = new Car("CAR-001", 4);
         Truck truck = new Truck("TRUCK-777", true);
         Drone drone = new Drone("DRONE-42", 95);
@@ -16,8 +17,9 @@ public class Main {
         List<Vehicle> fleet = Arrays.asList(car, truck, drone);
         new FleetManager().startDelivery(fleet);
 
+       
         List<ITrackable> trackable = Arrays.asList(truck, drone);
-        // List<ITrackable> bad = Arrays.asList(truck, drone, car); // ошибка компиляции
+        
 
         LogisticsCenter center = new LogisticsCenter();
         center.dispatch(trackable);
@@ -26,5 +28,23 @@ public class Main {
         drone.move();
 
         center.monitorFleet(trackable);
+
+       
+        Warehouse<StandardBox> boxWarehouse = new Warehouse<>();
+        boxWarehouse.addItem(new StandardBox("SB-10", "Одежда", 12.5));
+        boxWarehouse.addItem(new StandardBox("SB-11", "Книги", 8.0));
+
+        Warehouse<FragileItem> fragileWarehouse = new Warehouse<>();
+        fragileWarehouse.addItem(new FragileItem("FR-10", "Ваза", 3.2, true));
+        fragileWarehouse.addItem(new FragileItem("FR-11", "Монитор", 7.5, true));
+
+      
+
+        boxWarehouse.printManifest();
+        fragileWarehouse.printManifest();
+
+        new Report<>(boxWarehouse).printReport();
+        new Report<>(fragileWarehouse).printReport();
+        new Report<>("Текстовый отчёт о доставке").printReport();
     }
 }
