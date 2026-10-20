@@ -1,22 +1,24 @@
 package com.smartlogistics;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
         Car car = new Car("CAR-001", 4);
         Truck truck = new Truck("TRUCK-001", true);
-        Drone drone = new Drone("DRONE-001", 80);
+        Drone drone = new Drone("DRONE-001", 90);
 
-        System.out.println("Car capacity: " + car.getMaxCapacityKg());
-        System.out.println("Truck capacity: " + truck.getMaxCapacityKg());
-        System.out.println("Drone capacity: " + drone.getMaxCapacityKg());
+        car.load(200);
+        truck.load(new CargoItem("Станки", 4500));
+        drone.load(Arrays.asList(
+                new CargoItem("Документы", 1.5),
+                new CargoItem("Лекарства", 2.0)
+        ));
 
-        car.load(300);
-        truck.load(12000);
-        drone.load(3);
-        drone.load(4);
+        List<Vehicle> fleet = Arrays.asList(car, truck, drone);
+        new FleetManager().startDelivery(fleet);
 
-        car.move();
-        truck.move();
         drone.move();
     }
 }
